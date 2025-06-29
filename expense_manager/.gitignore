@@ -1,0 +1,70 @@
+# Python
+*.pyc
+__pycache__/
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.pytest_cache/
+htmlcov/
+.cache/
+
+# Django
+*.log
+*.pot
+*.mo
+*.po
+local_settings.py
+db.sqlite3
+media/
+static_root/ # Se você tiver uma pasta STATIC_ROOT configurada para collectstatic
+
+# IDEs and Editors
+.vscode/        # VS Code settings (pode querer incluir alguns se forem importantes para o projeto)
+.idea/          # IntelliJ IDEA / PyCharm
+*.sublime-project
+*.sublime-workspace
+*.tmproj
+
+# Operating System Files
+.DS_Store       # macOS
+Thumbs.db       # Windows
+ehthumbs.db     # Windows
+Desktop.ini     # Windows
+
+# Node.js (for Tailwind)
+node_modules/
+npm-debug.log
+yarn-error.log
+.parcel-cache/
+dist/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Specific to this project
+expense_manager_env/ # Seu ambiente virtual
+/theme/node_modules/ # Certifique-se de ignorar o node_modules dentro da pasta 'theme'
+/theme/static/css/tailwind.css # O CSS compilado deve ser ignorado para não comitar binários gerados
+*.sqlite3 # Ignora qualquer arquivo .sqlite3

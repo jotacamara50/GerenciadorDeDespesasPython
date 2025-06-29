@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Despesas</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased leading-normal min-h-screen flex flex-col">
+    <header class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-4 text-center shadow-lg relative z-10">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2 sm:mb-0">Gerenciador de Despesas</h1>
+            <nav>
+                <button id="logoutBtn"
+                        class="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-5 rounded-full shadow-md
+                               transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                    Sair
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto mt-8 p-6 bg-white rounded-xl shadow-2xl mb-8">
+        <section id="auth-section" class="mb-8 p-8 border border-gray-200 rounded-lg bg-gray-50 max-w-md mx-auto" style="display: none;">
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-700">Login / Registro</h2>
+            <form id="loginForm" class="flex flex-col gap-5">
+                <input type="text" id="username" placeholder="Usuário" required
+                       class="p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200 ease-in-out text-lg">
+                <input type="password" id="password" placeholder="Senha" required
+                       class="p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200 ease-in-out text-lg">
+                <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-4 px-6 rounded-lg shadow-lg
+                               transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 font-bold text-xl">
+                    Entrar
+                </button>
+            </form>
+            <button id="registerBtn"
+                    class="mt-6 w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 px-6 rounded-lg shadow-lg
+                           transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 font-bold text-xl">
+                Registrar
+            </button>
+        </section>
+
+        <section id="app-section" class="mb-8 p-8 border border-gray-200 rounded-lg bg-gray-50" style="display: none;">
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-700">Suas Despesas</h2>
+            <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-5 bg-white rounded-lg shadow-md border border-gray-100">
+                <div class="md:col-span-1">
+                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
+                    <input type="number" id="amount" placeholder="Ex: 50.00" step="0.01" required
+                           class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200 ease-in-out">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                    <input type="text" id="description" placeholder="Ex: Jantar com amigos" required
+                           class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200 ease-in-out">
+                </div>
+                <div class="md:col-span-1">
+                    <label for="categorySelect" class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                    <select id="categorySelect"
+                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white transition duration-200 ease-in-out cursor-pointer">
+                        <option value="">Sem Categoria</option>
+                        </select>
+                </div>
+                <div class="md:col-span-4 mt-2">
+                     <button type="submit"
+                            class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-3 px-6 rounded-lg shadow-md
+                                   transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 font-semibold text-lg">
+                        Adicionar Despesa
+                    </button>
+                </div>
+            </form>
+
+            <h3 class="text-2xl font-semibold mt-10 mb-5 text-center text-gray-700">Adicionar Nova Categoria</h3>
+            <form id="categoryForm" class="flex flex-col sm:flex-row gap-4 mb-8 p-5 bg-white rounded-lg shadow-md border border-gray-100">
+                <div class="flex-grow">
+                    <label for="categoryName" class="block text-sm font-medium text-gray-700 mb-1">Nome da Categoria</label>
+                    <input type="text" id="categoryName" placeholder="Ex: Lazer, Educação" required
+                           class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition duration-200 ease-in-out">
+                </div>
+                <button type="submit"
+                        class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white py-3 px-6 rounded-lg shadow-md
+                               transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75 font-semibold text-lg flex-shrink-0">
+                    Adicionar Categoria
+                </button>
+            </form>
+
+            <h3 class="text-2xl font-semibold mt-10 mb-5 text-center text-gray-700">Lista de Despesas</h3>
+            <ul id="expenseList" class="space-y-4">
+                <li class="bg-white p-5 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center text-gray-700 border border-gray-200 transition duration-300 ease-in-out hover:shadow-md">
+                    <div class="flex-grow mb-2 sm:mb-0">
+                        <span class="block text-lg font-medium">R$ 100.00 - Jantar de aniversário</span>
+                        <span class="block text-sm text-gray-500">Categoria: Alimentação - Data: 27/06/2025</span>
+                    </div>
+                    <button class="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                        Excluir
+                    </button>
+                </li>
+                <li class="bg-white p-5 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center text-gray-700 border border-gray-200 transition duration-300 ease-in-out hover:shadow-md">
+                    <div class="flex-grow mb-2 sm:mb-0">
+                        <span class="block text-lg font-medium">R$ 25.50 - Passagem de ônibus</span>
+                        <span class="block text-sm text-gray-500">Categoria: Transporte - Data: 27/06/2025</span>
+                    </div>
+                    <button class="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md shadow-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                        Excluir
+                    </button>
+                </li>
+            </ul>
+
+            <h3 class="text-2xl font-semibold mt-10 mb-5 text-center text-gray-700">Resumo Financeiro</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <p id="dailySummary" class="text-lg font-medium text-gray-700 p-5 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
+                    Total de despesas hoje: <span class="font-bold text-blue-700">R$ 0.00</span>
+                </p>
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                    <h4 class="text-xl font-medium mb-3 text-gray-700">Resumo Mensal por Categoria</h4>
+                    <canvas id="monthlyChart" class="w-full h-64"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 mt-8 shadow-inner">
+        <div class="container mx-auto text-sm">
+            &copy; {{ "now"|date:"Y" }} Gerenciador de Despesas. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
