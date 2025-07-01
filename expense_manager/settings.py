@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from datetime import timedelta # Necessário para SIMPLE_JWT
 from dotenv import load_dotenv # Importa a função para carregar variáveis de ambiente do .env
 
 load_dotenv() # Carrega as variáveis de ambiente do arquivo .env (para uso local)
@@ -25,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # EM PRODUÇÃO: esta chave virá de uma variável de ambiente no servidor.
 # Para desenvolvimento local, ele usa o valor de DJANGO_SECRET_KEY do seu .env
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-uma_chave_temporaria_para_desenv_local_se_nao_tiver_dotenv')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'default-dev-secret-key-please-change-me-in-production')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -89,11 +90,13 @@ WSGI_APPLICATION = 'expense_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'GERENCIADORDESPESA2'),  # Nome do seu DB local
-        'USER': os.environ.get('DB_USER', 'GERENCIADOR3'),        # Usuário do seu DB local
-        'PASSWORD': os.environ.get('DB_PASSWORD', '83216883'),    # Sua senha do DB local
-        'HOST': os.environ.get('DB_HOST', 'localhost'),           # Host do seu DB local
-        'PORT': os.environ.get('DB_PORT', '5432'),                # Porta do seu DB local
+        # As credenciais abaixo são para desenvolvimento local via .env
+        # Para produção, elas virão das variáveis de ambiente definidas no servidor
+        'NAME': os.environ.get('DB_NAME', 'minhadespesa'),
+        'USER': os.environ.get('DB_USER', 'despesa'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'Abc123'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -129,10 +132,20 @@ USE_I18N = True
 USE_TZ = True
 
 
+# ** NOVO: Força o Django a gerar URLs com este prefixo para subdiretório **
+FORCE_SCRIPT_NAME = '/gerenciador/'
+
+# URLs para autenticação e redirecionamento (muito importantes para o subdiretório)
+LOGIN_URL = '/gerenciador/admin/login/' # Exemplo: Redireciona para o login do admin
+LOGIN_REDIRECT_URL = '/gerenciador/'   # Redireciona para a home do seu app após login
+LOGOUT_REDIRECT_URL = '/gerenciador/'  # Redireciona para a home do seu app após logout
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# ** ALTERADO: STATIC_URL agora inclui o prefixo do subdiretório **
+STATIC_URL = '/gerenciador/static/' # Agora, Django gerará /gerenciador/static/...
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Pasta para onde os arquivos estáticos serão coletados em produção
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), # Pasta de arquivos estáticos na raiz do projeto
@@ -151,7 +164,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # Para documentação da API
 }
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
