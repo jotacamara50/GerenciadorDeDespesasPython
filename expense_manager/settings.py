@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv # Importa a função para carregar variáveis de ambiente do .env
+
+load_dotenv() # Carrega as variáveis de ambiente do arquivo .env (para uso local)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p_&l=p*3(+ux9v#!_fa=1ys&jf++zxvdy=9htt0lvh_36pebis'
+# EM PRODUÇÃO: esta chave virá de uma variável de ambiente no servidor.
+# Para desenvolvimento local, ele usa o valor de DJANGO_SECRET_KEY do seu .env
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-uma_chave_temporaria_para_desenv_local_se_nao_tiver_dotenv')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Em produção, esta variável de ambiente deve ser 'False'.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+# Hosts permitidos em produção. No servidor, defina DJANGO_ALLOWED_HOSTS='SEU_IP,seu-dominio.com'
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -37,10 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'theme',
-    'tailwind',
+    'theme', # Seu app tema do Tailwind
+    'tailwind', # Necessário para django-tailwind
     'rest_framework',
-    'expenses',
+    'expenses', # Seu app de despesas
+    'drf_spectacular', # Para documentação da API
 ]
 
 MIDDLEWARE = [
@@ -80,11 +89,11 @@ WSGI_APPLICATION = 'expense_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_manager_db',  # Nome do seu banco de dados
-        'USER': 'postgres',      # Seu usuário do PostgreSQL
-        'PASSWORD': '83216883',    # Sua senha do PostgreSQL
-        'HOST': 'localhost',           # Ou o IP do seu servidor PostgreSQL
-        'PORT': '',                    # Deixe vazio para a porta padrão (5432)
+        'NAME': os.environ.get('DB_NAME', 'GERENCIADORDESPESA2'),  # Nome do seu DB local
+        'USER': os.environ.get('DB_USER', 'GERENCIADOR3'),        # Usuário do seu DB local
+        'PASSWORD': os.environ.get('DB_PASSWORD', '83216883'),    # Sua senha do DB local
+        'HOST': os.environ.get('DB_HOST', 'localhost'),           # Host do seu DB local
+        'PORT': os.environ.get('DB_PORT', '5432'),                # Porta do seu DB local
     }
 }
 
@@ -124,21 +133,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Pasta para onde os arquivos estáticos serão coletados em produção
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), # Pasta de arquivos estáticos na raiz do projeto
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'), # Adicione esta linha
-]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # Para documentação da API
 }
 
 from datetime import timedelta
@@ -151,7 +161,9 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY, # Use a mesma SECRET_KEY do Django
+    # EM PRODUÇÃO: esta chave virá de uma variável de ambiente no servidor.
+    # Para desenvolvimento, pode usar o valor de SECRET_KEY ou uma chave própria do .env
+    'SIGNING_KEY': os.environ.get('JWT_SIGNING_KEY', SECRET_KEY),
     'SIZE_VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
@@ -174,6 +186,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# No final do arquivo, ou em um local apropriado
-TAILWIND_APP_NAME = 'theme'
+# Configuração do Django-Tailwind
+TAILWIND_APP = 'theme' # Nome do seu app tema Tailwind
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd" # Caminho para o executável npm. Ajuste conforme sua instalação!
