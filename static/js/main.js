@@ -1,6 +1,6 @@
 // static/js/main.js
 
-const API_BASE_URL = '/api'; // Ajuste se a sua API estiver em outro caminho
+const API_BASE_URL = '/gerenciador/api';
 let accessToken = localStorage.getItem('accessToken');
 let refreshToken = localStorage.getItem('refreshToken');
 
