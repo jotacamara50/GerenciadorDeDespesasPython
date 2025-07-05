@@ -1,4 +1,5 @@
 # expense_manager/urls.py
+
 from django.contrib import admin
 from django.urls import path, include
 from expenses.views import home
@@ -8,17 +9,17 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    # Admin
-    path('admin/login/', admin.site.urls), # Login do admin
-    path('admin/', admin.site.urls), # Acesso completo ao admin
+    # Admin (acessível em /gerenciador/admin/) - AGORA COM O PREFIXO
+    path('gerenciador/admin/login/', admin.site.urls),
+    path('gerenciador/admin/', admin.site.urls),
 
-    # Home Page do seu projeto
-    path('', home, name='home'),
+    # Home Page (acessível em /gerenciador/) - AGORA COM O PREFIXO
+    path('gerenciador/', home, name='home'),
 
-    # API (DRF)
-    path('api/', include('expenses.urls')),
+    # API (DRF) (acessível em /gerenciador/api/) - AGORA COM O PREFIXO
+    path('gerenciador/api/', include('expenses.urls')), # Inclui as URLs da sua app expenses
 
-    # Autenticação JWT
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # Autenticação JWT (acessível em /gerenciador/api/token/) - AGORA COM O PREFIXO
+    path('gerenciador/api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('gerenciador/api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
