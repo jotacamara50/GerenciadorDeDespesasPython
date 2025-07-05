@@ -133,7 +133,7 @@ USE_TZ = True
 
 
 # ** NOVO: Força o Django a gerar URLs com este prefixo para subdiretório **
-FORCE_SCRIPT_NAME = '/gerenciador/'
+# FORCE_SCRIPT_NAME = '/gerenciador/'
 
 # URLs para autenticação e redirecionamento (muito importantes para o subdiretório)
 LOGIN_URL = '/gerenciador/admin/login/' # Exemplo: Redireciona para o login do admin
