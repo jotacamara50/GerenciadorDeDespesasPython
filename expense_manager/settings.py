@@ -145,7 +145,7 @@ LOGOUT_REDIRECT_URL = '/gerenciador/'  # Redireciona para a home do seu app apó
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 # ** ALTERADO: STATIC_URL agora inclui o prefixo do subdiretório **
-STATIC_URL = '/gerenciador/static/' # Agora, Django gerará /gerenciador/static/...
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Pasta para onde os arquivos estáticos serão coletados em produção
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), # Pasta de arquivos estáticos na raiz do projeto
