@@ -2,12 +2,22 @@
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny # Importe AllowAny
 from rest_framework.decorators import action
-from .models import Expense, Category
-from .serializers import ExpenseSerializer, CategorySerializer
+from django.contrib.auth.models import User # Importe o modelo User
 from django.db.models import Sum
 from datetime import date, timedelta
+from django.shortcuts import render # Já estava aqui
+# from django.contrib.auth.decorators import login_required # REMOVA ESTA LINHA OU MANTENHA COMENTADA
+
+from .models import Expense, Category
+from .serializers import ExpenseSerializer, CategorySerializer, UserRegistrationSerializer # Importe UserRegistrationSerializer
+
+# Sua view home - REMOVA @login_required AQUI
+# @login_required # REMOVA ESTA LINHA!
+def home(request):
+    return render(request, 'expenses/index.html')
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -15,16 +25,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Retorna as categorias pertencentes ao usuário logado.
-        """
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """
-        Associa a categoria ao usuário logado na criação.
-        """
         serializer.save(user=self.request.user)
+
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
@@ -32,22 +37,13 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Retorna as despesas pertencentes ao usuário logado.
-        """
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """
-        Associa a despesa ao usuário logado na criação.
-        """
         serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['get'])
     def daily_summary(self, request):
-        """
-        Retorna o resumo diário de despesas para o usuário logado.
-        """
         today = date.today()
         expenses_today = self.get_queryset().filter(date=today)
         total_today = expenses_today.aggregate(Sum('amount'))['amount__sum'] or 0.00
@@ -55,9 +51,6 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
-        """
-        Retorna o resumo mensal de despesas por categoria para o usuário logado.
-        """
         current_month = date.today().month
         current_year = date.today().year
 
@@ -68,9 +61,14 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
         return Response(monthly_expenses)
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 
-@login_required
-def home(request):
-    return render(request, 'expenses/index.html')
+# NOVO: View para Registro de Usuário (Completa) - DEVE ESTAR AQUI
+class UserRegistrationView(viewsets.ViewSet):
+    permission_classes = [AllowAny] # Permite acesso sem autenticação
+
+    def create(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({'message': 'Usuário registrado com sucesso!'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
